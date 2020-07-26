@@ -51,7 +51,11 @@ class RedisCacheBackend(BaseCacheBackend):
 
         return await client.set(key, value, expire=timeout)
 
-    async def get(self, key: Union[str, int], default: Union[str, int] = None) -> bool:
+    async def get(
+        self,
+        key: Union[str, int],
+        default: Union[str, int] = None
+    ) -> bool:
         client = await self._client
         cached_value = await client.get(key, encoding='utf8')
 

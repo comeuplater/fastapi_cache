@@ -13,16 +13,18 @@ class BaseCacheBackend(object):
         raise NotImplementedError
 
     async def get(
-        self, key: Union[str, int],
+        self,
+        key: Union[str, int],
         default: Union[str, int] = None
-    ) -> None:
+    ) -> bool:
         raise NotImplementedError
 
     async def set(
-        self, key: Union[str, int],
+        self,
+        key: Union[str, int],
         value: Union[str, int],
         timeout: int = DEFAULT_TIMEOUT
-    ) -> None:
+    ) -> bool:
         raise NotImplementedError
 
     async def delete(self, key: Union[str, int]) -> bool:
