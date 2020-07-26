@@ -4,7 +4,7 @@ DEFAULT_TIMEOUT = 0
 
 
 class InMemoryCacheBackend(BaseCacheBackend):
-    _cache: dict = []
+    _cache: dict = {}
 
     async def add(self, key, value, timeout=DEFAULT_TIMEOUT):
         if key in self._cache:
