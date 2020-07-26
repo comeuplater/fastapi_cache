@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Union
 
 import aioredis
 from aioredis import Redis
@@ -6,6 +6,7 @@ from aioredis import Redis
 from .base import BaseCacheBackend, DEFAULT_TIMEOUT
 
 DEFAULT_POOL_MIN_SIZE = 5
+CACHE_KEY = 'REDIS'
 
 
 class RedisCacheBackend(BaseCacheBackend):
@@ -75,3 +76,12 @@ class RedisCacheBackend(BaseCacheBackend):
         client = await self._client
 
         return await client.delete(key)
+
+    async def flush(self) -> None:
+        client = await self._client
+        await client.flushdb()
+
+    async def close(self) -> None:
+        client = await self._client
+        client.close()
+        await client.wait_closed()

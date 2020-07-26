@@ -29,3 +29,9 @@ class BaseCacheBackend(object):
 
     async def delete(self, key: Union[str, int]) -> bool:
         raise NotImplementedError
+
+    async def flush(self) -> None:
+        raise NotImplementedError
+
+    async def close(self) -> None:
+        raise NotImplementedError

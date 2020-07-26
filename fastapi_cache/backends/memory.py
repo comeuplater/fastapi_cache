@@ -40,7 +40,12 @@ class InMemoryCacheBackend(BaseCacheBackend):
     async def delete(self, key: Union[str, int]) -> bool:
         if key not in self._cache:
             return False
-
         del self._cache[key]
 
         return True
+
+    async def flush(self) -> None:
+        self._cache = {}
+
+    async def close(self) -> None:
+        return None
