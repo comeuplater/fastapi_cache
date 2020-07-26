@@ -1,4 +1,12 @@
-# fastapi_cache
+# FastAPI Cache
+
+The FastAPI-Cache simple lightweight cache system.
+
+### Installation ###
+
+```sh
+ $ pip install FastAPI-Cache
+```
 
 ## Usage example
 ```python
