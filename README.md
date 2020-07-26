@@ -18,11 +18,11 @@ def redis_cache():
 async def hello(
     cache: RedisCacheBackend = Depends(redis_cache)
 ):
-    in_cache = await cache.get('some_cached_key', 'default')
+    in_cache = await cache.get('some_cached_key')
     if not in_cache:
         await cache.set('some_cached_key', 'new_value', 5)
 
-    return {'response': in_cache}
+    return {'response': in_cache or 'default'}
 
 
 @app.on_event('startup')
