@@ -1,8 +1,8 @@
 # FastAPI Cache
 
-The FastAPI-Cache simple lightweight cache system.
+Implements simple lightweight cache system as dependencies in FastAPI.
 
-### Installation ###
+## Installation
 
 ```sh
  $ pip install FastAPI-Cache
@@ -43,3 +43,8 @@ async def on_startup() -> None:
 async def on_shutdown() -> None:
     await close_caches()
 ```
+
+## TODO
+
+* [ ] Add tests
+* [ ] Add registry decorator
