@@ -1,0 +1,23 @@
+language: python
+python: 3.8
+
+dist: xenial
+sudo: required
+
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - python3.8
+
+install:
+  - pip install tox
+
+script:
+  - tox
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never

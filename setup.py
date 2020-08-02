@@ -10,14 +10,12 @@ setup(
     description='FastAPI simple cache',
     author=__author__,
     url='https://github.com/comeuplater/fastapi_cache',
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests',)),
     long_description=open(join(dirname(__file__), 'README.md')).read(),
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     license='MIT License',
     keywords=[
         'redis', 'aioredis', 'asyncio', 'fastapi', 'starlette', 'cache'
     ],
-    install_requires=[
-        'aioredis==1.3.1',
-    ],
+    install_requires=open(join(dirname(__file__), 'requirements.txt')).read(),
 )

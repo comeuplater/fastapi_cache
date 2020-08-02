@@ -10,7 +10,7 @@ Implements simple lightweight cache system as dependencies in FastAPI.
 ## Installation
 
 ```sh
- $ pip install fastapi-cache
+pip install fastapi-cache
 ```
 
 ## Usage example
@@ -51,5 +51,5 @@ async def on_shutdown() -> None:
 
 ## TODO
 
-* [ ] Add tests
-* [ ] Add registry decorator
+*  [ ] Add tests
+*  [ ] Add registry decorator
