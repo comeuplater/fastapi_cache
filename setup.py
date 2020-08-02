@@ -17,5 +17,7 @@ setup(
     keywords=[
         'redis', 'aioredis', 'asyncio', 'fastapi', 'starlette', 'cache'
     ],
-    install_requires=open(join(dirname(__file__), 'requirements.txt')).read(),
+    install_requires=[
+        'aioredis==1.3.1',
+    ],
 )
