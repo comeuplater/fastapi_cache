@@ -1,5 +1,7 @@
 # FastAPI Cache
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2ec5c44e899943c8920d3c3e31616784)](https://app.codacy.com/manual/ivan.sushkov/fastapi_cache?utm_source=github.com&utm_medium=referral&utm_content=comeuplater/fastapi_cache&utm_campaign=Badge_Grade_Dashboard)
+
 Implements simple lightweight cache system as dependencies in FastAPI.
 
 ## Installation
