@@ -5,7 +5,7 @@ Implements simple lightweight cache system as dependencies in FastAPI.
 ## Installation
 
 ```sh
- $ pip install FastAPI-Cache
+ $ pip install fastapi-cache
 ```
 
 ## Usage example
