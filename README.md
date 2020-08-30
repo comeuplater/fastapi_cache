@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PyPi Version](https://img.shields.io/pypi/v/fastapi-cache.svg)](https://pypi.python.org/pypi/fastapi-cache/)
 [![Downloads](https://pepy.tech/badge/fastapi-cache)](https://pepy.tech/project/fastapi-cache)
+[![Build Status](https://travis-ci.com/comeuplater/fastapi_cache.svg?branch=master)](https://travis-ci.com/comeuplater/fastapi_cache)
 
 Implements simple lightweight cache system as dependencies in FastAPI.
 
