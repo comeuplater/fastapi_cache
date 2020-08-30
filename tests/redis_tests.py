@@ -1,3 +1,4 @@
+import aioredis
 import pytest
 
 from fastapi_cache.backends.redis import RedisCacheBackend
@@ -87,4 +88,5 @@ async def test_close_should_close_connection(
     f_backend: RedisCacheBackend
 ) -> None:
     await f_backend.close()
-    await f_backend.add(TEST_KEY, TEST_VALUE)
+    with pytest.raises(aioredis.errors.PoolClosedError):
+        await f_backend.add(TEST_KEY, TEST_VALUE)
