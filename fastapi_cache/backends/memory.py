@@ -5,8 +5,10 @@ from .base import BaseCacheBackend
 DEFAULT_TIMEOUT = 0
 CACHE_KEY = 'IN_MEMORY'
 
+
 class InMemoryCacheBackend(BaseCacheBackend):
-    _cache: dict = {}
+    def __init__(self):
+        self._cache: dict = {}
 
     async def add(
         self,
