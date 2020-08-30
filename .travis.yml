@@ -1,5 +1,6 @@
 language: python
-python: 3.8
+python:
+  - "3.8"
 
 dist: xenial
 sudo: required
@@ -10,6 +11,9 @@ addons:
       - deadsnakes
     packages:
       - python3.8
+
+services:
+  - redis-server
 
 install:
   - pip install tox
