@@ -47,7 +47,7 @@ class RedisCacheBackend(BaseCacheBackend):
         client = await self._client
         in_cache = await client.get(key)
 
-        if in_cache is None:
+        if in_cache is not None:
             return False
 
         return await client.set(key, value, expire=timeout)
