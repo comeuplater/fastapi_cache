@@ -38,7 +38,7 @@ async def test_should_return_default_if_key_not_exists(
     f_backend: RedisCacheBackend
 ) -> None:
     default = '3.14159'
-    fetched_value = await f_backend.get(TEST_KEY, default)
+    fetched_value = await f_backend.get('not_exists', default)
 
     assert fetched_value == default
 
@@ -80,3 +80,11 @@ async def test_flush_should_remove_all_objects_from_cache(
 
     assert await f_backend.get('pi') is None
     assert await f_backend.get('golden_ratio') is None
+
+
+@pytest.mark.asyncio
+async def test_close_should_close_connection(
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.close()
+    await f_backend.add(TEST_KEY, TEST_VALUE)

@@ -36,7 +36,7 @@ async def test_should_return_default_if_key_not_exists(
     f_backend: InMemoryCacheBackend
 ) -> None:
     default = '3.14159'
-    fetched_value = await f_backend.get(TEST_KEY, default)
+    fetched_value = await f_backend.get('not_exists', default)
 
     assert fetched_value == default
 

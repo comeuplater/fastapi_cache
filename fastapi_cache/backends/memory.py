@@ -49,5 +49,5 @@ class InMemoryCacheBackend(BaseCacheBackend):
     async def flush(self) -> None:
         self._cache = {}
 
-    async def close(self) -> None:
+    async def close(self) -> None:  # pragma: no cover
         return None
