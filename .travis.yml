@@ -5,22 +5,13 @@ python:
   - "3.7"
   - "3.8"
 
-
 dist: xenial
-sudo: required
-
-addons:
-  apt:
-    sources:
-      - deadsnakes
-    packages:
-      - python3.8
 
 services:
   - redis-server
 
 install:
-  - pip install tox
+  - pip install tox-travis
 
 script:
   - tox
