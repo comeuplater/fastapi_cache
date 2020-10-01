@@ -24,7 +24,7 @@ class BaseCacheBackend(object):
         key: Union[str, int],
         value: Union[str, int],
         timeout: int = DEFAULT_TIMEOUT
-    ) -> bool:
+    ) -> Union[str, int]:
         raise NotImplementedError
 
     async def delete(self, key: Union[str, int]) -> bool:

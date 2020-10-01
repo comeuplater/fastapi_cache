@@ -26,7 +26,7 @@ class InMemoryCacheBackend(BaseCacheBackend):
         self,
         key: Union[str, int],
         default: Union[str, int] = None
-    ) -> bool:
+    ) -> Union[str, int]:
         return self._cache.get(key, default)
 
     async def set(

@@ -56,7 +56,7 @@ class RedisCacheBackend(BaseCacheBackend):
         self,
         key: Union[str, int],
         default: Union[str, int] = None
-    ) -> bool:
+    ) -> Union[str, int]:
         client = await self._client
         cached_value = await client.get(key, encoding='utf8')
 
