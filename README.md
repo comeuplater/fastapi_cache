@@ -52,5 +52,5 @@ async def on_shutdown() -> None:
 
 ## TODO
 
-*  [ ] Add tests
+*  [X] Add tests
 *  [ ] Add registry decorator
