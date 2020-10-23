@@ -3,6 +3,7 @@ import pytest
 
 from fastapi_cache.backends.redis import RedisCacheBackend
 
+
 TEST_KEY = 'constant'
 TEST_VALUE = '0'
 
@@ -22,6 +23,18 @@ async def test_should_add_n_get_data(
 
     assert is_added is True
     assert await f_backend.get(TEST_KEY) == TEST_VALUE
+
+
+@pytest.mark.asyncio
+async def test_should_add_n_get_data_no_encoding(
+    f_backend: RedisCacheBackend
+) -> None:
+    NO_ENCODING_KEY = 'bytes'
+    NO_ENCODING_VALUE = b'test'
+    is_added = await f_backend.add(NO_ENCODING_KEY, NO_ENCODING_VALUE)
+
+    assert is_added is True
+    assert await f_backend.get(NO_ENCODING_KEY, encoding=None) == bytes(NO_ENCODING_VALUE)
 
 
 @pytest.mark.asyncio
