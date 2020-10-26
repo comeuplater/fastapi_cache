@@ -26,7 +26,8 @@ class InMemoryCacheBackend(BaseCacheBackend):
     async def get(
         self,
         key: Union[str, int],
-        default: Union[str, int] = None
+        default: Union[str, int] = None,
+        **kwargs
     ) -> Any:
         return self._cache.get(key, default)
 

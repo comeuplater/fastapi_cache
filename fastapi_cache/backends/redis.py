@@ -11,6 +11,8 @@ CACHE_KEY = 'REDIS'
 
 
 class RedisCacheBackend(BaseCacheBackend):
+    DEFAULT_ENCODING = 'utf-8'
+
     def __init__(self, address: str, pool_minsize: int = DEFAULT_POOL_MIN_SIZE) -> None:
         self._redis_address = address
         self._redis_pool_minsize = pool_minsize
@@ -57,14 +59,13 @@ class RedisCacheBackend(BaseCacheBackend):
         self,
         key: Union[str, int],
         default: Any = None,
-        encoding: Optional[str] = 'utf-8'
+        **kwargs,
     ) -> Any:
-        kwargs = {"key": key}
-        if encoding is not None:
-            kwargs['encoding'] = encoding
+        if 'encoding' not in kwargs:
+            kwargs['encoding'] = self.DEFAULT_ENCODING
 
         client = await self._client
-        cached_value = await client.get(**kwargs)
+        cached_value = await client.get(key, **kwargs)
 
         return cached_value if cached_value is not None else default
 

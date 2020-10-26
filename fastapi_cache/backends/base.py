@@ -15,7 +15,8 @@ class BaseCacheBackend(object):
     async def get(
         self,
         key: Union[str, int],
-        default: Any = None
+        default: Any = None,
+        **kwargs
     ) -> Any:
         raise NotImplementedError
 
