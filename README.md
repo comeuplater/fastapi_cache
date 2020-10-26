@@ -53,7 +53,8 @@ async def on_shutdown() -> None:
 ## TODO
 
 *  [X] Add tests
-*  [ ] Add registry decorator
+*  [ ] ~~Add registry decorator~~
+*  [ ] Add dependency for requests caching
 
 ## Acknowledgments
 
