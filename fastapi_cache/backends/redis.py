@@ -1,9 +1,10 @@
-from typing import Union
+from typing import Any, Optional, Union
 
 import aioredis
 from aioredis import Redis
 
 from .base import BaseCacheBackend, DEFAULT_TIMEOUT
+
 
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
@@ -27,7 +28,7 @@ class RedisCacheBackend(BaseCacheBackend):
     async def add(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         """
@@ -55,17 +56,22 @@ class RedisCacheBackend(BaseCacheBackend):
     async def get(
         self,
         key: Union[str, int],
-        default: Union[str, int] = None
-    ) -> Union[str, int]:
+        default: Any = None,
+        encoding: Optional[str] = 'utf-8'
+    ) -> Any:
+        kwargs = {"key": key}
+        if encoding is not None:
+            kwargs['encoding'] = encoding
+
         client = await self._client
-        cached_value = await client.get(key, encoding='utf8')
+        cached_value = await client.get(**kwargs)
 
         return cached_value if cached_value is not None else default
 
     async def set(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         client = await self._client

@@ -1,6 +1,7 @@
-from typing import Union
+from typing import Any, Union
 
 from .base import BaseCacheBackend
+
 
 DEFAULT_TIMEOUT = 0
 CACHE_KEY = 'IN_MEMORY'
@@ -13,7 +14,7 @@ class InMemoryCacheBackend(BaseCacheBackend):
     async def add(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         if key in self._cache:
@@ -26,13 +27,13 @@ class InMemoryCacheBackend(BaseCacheBackend):
         self,
         key: Union[str, int],
         default: Union[str, int] = None
-    ) -> Union[str, int]:
+    ) -> Any:
         return self._cache.get(key, default)
 
     async def set(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         self._cache[key] = value

@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 DEFAULT_TIMEOUT = 600
 
@@ -7,7 +7,7 @@ class BaseCacheBackend(object):
     async def add(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
         raise NotImplementedError
@@ -15,16 +15,16 @@ class BaseCacheBackend(object):
     async def get(
         self,
         key: Union[str, int],
-        default: Union[str, int] = None
-    ) -> bool:
+        default: Any = None
+    ) -> Any:
         raise NotImplementedError
 
     async def set(
         self,
         key: Union[str, int],
-        value: Union[str, int],
+        value: Any,
         timeout: int = DEFAULT_TIMEOUT
-    ) -> Union[str, int]:
+    ) -> bool:
         raise NotImplementedError
 
     async def delete(self, key: Union[str, int]) -> bool:
