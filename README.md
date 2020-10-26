@@ -54,3 +54,7 @@ async def on_shutdown() -> None:
 
 *  [X] Add tests
 *  [ ] Add registry decorator
+
+## Acknowledgments
+
+* Balburdia
