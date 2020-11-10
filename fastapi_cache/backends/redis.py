@@ -78,10 +78,10 @@ class RedisCacheBackend(BaseCacheBackend):
 
         return await client.set(key, value, expire=timeout)
 
-    async def exists(self, key: Union[str, int]) -> bool:
+    async def exists(self, *key: Union[str, int]) -> int:
         client = await self._client
 
-        return await client.exists(key)
+        return await client.exists(*key)
 
     async def delete(self, key: Union[str, int]) -> bool:
         client = await self._client

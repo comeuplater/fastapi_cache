@@ -66,6 +66,17 @@ async def test_exists_check_if_key_exsists(
     assert is_there is 1
 
 @pytest.mark.asyncio
+async def test_exists_check_if_two_keys_exsists(
+    f_backend: RedisCacheBackend
+) -> None:
+    SECOND_TEST_KEY = "foobar"
+    await f_backend.add(TEST_KEY, TEST_VALUE)
+    await f_backend.add(SECOND_TEST_KEY, TEST_VALUE)
+    is_there = await f_backend.exists(TEST_KEY, SECOND_TEST_KEY)
+
+    assert is_there is 2
+
+@pytest.mark.asyncio
 async def test_set_should_rewrite_value(
     f_backend: RedisCacheBackend
 ) -> None:
