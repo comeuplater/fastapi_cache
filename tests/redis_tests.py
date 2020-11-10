@@ -56,6 +56,14 @@ async def test_should_return_default_if_key_not_exists(
 
     assert fetched_value == default
 
+@pytest.mark.asyncio
+async def test_exists_check_if_key_exsists(
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.add(TEST_KEY, TEST_VALUE)
+    is_there = await f_backend.exists(TEST_KEY)
+
+    assert is_there is 1
 
 @pytest.mark.asyncio
 async def test_set_should_rewrite_value(
@@ -82,6 +90,14 @@ async def test_delete_should_remove_from_cache(
 
     assert fetched_value is None
 
+
+@pytest.mark.asyncio
+async def test_exists_check_if_key_not_exsists(
+    f_backend: RedisCacheBackend
+) -> None:
+    is_there = await f_backend.exists(TEST_KEY)
+
+    assert is_there is 0
 
 @pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(
