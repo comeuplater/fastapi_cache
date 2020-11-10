@@ -66,7 +66,7 @@ async def test_exists_check_if_key_exsists(
     assert is_there is 1
 
 @pytest.mark.asyncio
-async def test_exists_check_if_two_keys_exsists(
+async def test_exists_check_if_one_out_of_two_keys_exsists(
     f_backend: RedisCacheBackend
 ) -> None:
     SECOND_TEST_KEY = "foobar"
