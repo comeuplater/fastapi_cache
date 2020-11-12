@@ -28,6 +28,9 @@ class BaseCacheBackend(object):
     ) -> bool:
         raise NotImplementedError
 
+    async def exists(self, *keys: Union[str, int]) -> bool:
+        raise NotImplementedError
+
     async def delete(self, key: Union[str, int]) -> bool:
         raise NotImplementedError
 

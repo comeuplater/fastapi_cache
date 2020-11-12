@@ -1,10 +1,9 @@
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 import aioredis
 from aioredis import Redis
 
 from .base import BaseCacheBackend, DEFAULT_TIMEOUT
-
 
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
@@ -79,10 +78,11 @@ class RedisCacheBackend(BaseCacheBackend):
 
         return await client.set(key, value, expire=timeout)
 
-    async def exists(self, *key: Union[str, int]) -> int:
+    async def exists(self, *keys: Union[str, int]) -> int:
         client = await self._client
+        exists = await client.exists(*keys)
 
-        return await client.exists(*key)
+        return bool(exists)
 
     async def delete(self, key: Union[str, int]) -> bool:
         client = await self._client

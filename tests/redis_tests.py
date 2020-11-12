@@ -1,8 +1,9 @@
+from typing import Tuple, List
+
 import aioredis
 import pytest
 
 from fastapi_cache.backends.redis import RedisCacheBackend
-
 
 TEST_KEY = 'constant'
 TEST_VALUE = '0'
@@ -56,7 +57,46 @@ async def test_should_return_default_if_key_not_exists(
 
     assert fetched_value == default
 
+
 @pytest.mark.asyncio
+@pytest.mark.parametrize('preset,keys,exists', (
+    [
+        [
+            ('key1', 'value1'),
+            ('key2', 'value2'),
+        ],
+        ['key1', 'key2'],
+        True,
+    ],
+    [
+        [
+            ('key1', 'value1'),
+        ],
+        ['key1', 'key2'],
+        True,
+    ],
+    [
+        [
+            ('key1', 'value1'),
+            ('key2', 'value2'),
+        ],
+        ['key3', 'key4'],
+        False,
+    ],
+
+))
+async def test_should_check_if_keys_exists(
+    preset: List[Tuple[str, str]],
+    keys: List[str],
+    exists: bool,
+    f_backend: RedisCacheBackend
+) -> None:
+    for key, value in preset:
+        await f_backend.add(key, value)
+
+    assert await f_backend.exists(*keys) == exists
+
+
 async def test_exists_check_if_key_exsists(
     f_backend: RedisCacheBackend
 ) -> None:
@@ -64,6 +104,7 @@ async def test_exists_check_if_key_exsists(
     is_there = await f_backend.exists(TEST_KEY)
 
     assert is_there is 1
+
 
 @pytest.mark.asyncio
 async def test_exists_check_if_one_out_of_two_keys_exsists(
@@ -75,6 +116,7 @@ async def test_exists_check_if_one_out_of_two_keys_exsists(
 
     assert is_there is 1
 
+
 @pytest.mark.asyncio
 async def test_exists_check_if_two_keys_exsists(
     f_backend: RedisCacheBackend
@@ -85,6 +127,7 @@ async def test_exists_check_if_two_keys_exsists(
     is_there = await f_backend.exists(TEST_KEY, SECOND_TEST_KEY)
 
     assert is_there is 2
+
 
 @pytest.mark.asyncio
 async def test_set_should_rewrite_value(
@@ -119,6 +162,7 @@ async def test_exists_check_if_key_not_exsists(
     is_there = await f_backend.exists(TEST_KEY)
 
     assert is_there is 0
+
 
 @pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(
