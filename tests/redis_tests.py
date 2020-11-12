@@ -58,7 +58,6 @@ async def test_should_return_default_if_key_not_exists(
     assert fetched_value == default
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize('preset,keys,exists', (
     [
         [
@@ -85,7 +84,8 @@ async def test_should_return_default_if_key_not_exists(
     ],
 
 ))
-async def test_should_check_if_keys_exists(
+@pytest.mark.asyncio
+async def test_should_check_is_several_keys_exists(
     preset: List[Tuple[str, str]],
     keys: List[str],
     exists: bool,
@@ -95,38 +95,6 @@ async def test_should_check_if_keys_exists(
         await f_backend.add(key, value)
 
     assert await f_backend.exists(*keys) == exists
-
-
-async def test_exists_check_if_key_exsists(
-    f_backend: RedisCacheBackend
-) -> None:
-    await f_backend.add(TEST_KEY, TEST_VALUE)
-    is_there = await f_backend.exists(TEST_KEY)
-
-    assert is_there is 1
-
-
-@pytest.mark.asyncio
-async def test_exists_check_if_one_out_of_two_keys_exsists(
-    f_backend: RedisCacheBackend
-) -> None:
-    SECOND_TEST_KEY = "foobar"
-    await f_backend.add(TEST_KEY, TEST_VALUE)
-    is_there = await f_backend.exists(TEST_KEY, SECOND_TEST_KEY)
-
-    assert is_there is 1
-
-
-@pytest.mark.asyncio
-async def test_exists_check_if_two_keys_exsists(
-    f_backend: RedisCacheBackend
-) -> None:
-    SECOND_TEST_KEY = "foobar"
-    await f_backend.add(TEST_KEY, TEST_VALUE)
-    await f_backend.add(SECOND_TEST_KEY, TEST_VALUE)
-    is_there = await f_backend.exists(TEST_KEY, SECOND_TEST_KEY)
-
-    assert is_there is 2
 
 
 @pytest.mark.asyncio
