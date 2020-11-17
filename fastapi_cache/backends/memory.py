@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Union, Hashable, Tuple
 
 from .base import BaseCacheBackend
 
@@ -6,13 +6,13 @@ DEFAULT_TIMEOUT = 0
 CACHE_KEY = 'IN_MEMORY'
 
 
-class InMemoryCacheBackend(BaseCacheBackend):
+class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
     def __init__(self):
         self._cache: dict = {}
 
     async def add(
         self,
-        key: Union[str, int],
+        key: Hashable,
         value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
@@ -24,15 +24,15 @@ class InMemoryCacheBackend(BaseCacheBackend):
 
     async def get(
         self,
-        key: Union[str, int],
-        default: Union[str, int] = None,
+        key: Hashable,
+        default: Any = None,
         **kwargs
     ) -> Any:
         return self._cache.get(key, default)
 
     async def set(
         self,
-        key: Union[str, int],
+        key: Hashable,
         value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
@@ -40,12 +40,12 @@ class InMemoryCacheBackend(BaseCacheBackend):
 
         return True
 
-    async def exists(self, *keys: Union[str, int]) -> bool:
+    async def exists(self, *keys: Tuple[Hashable]) -> bool:
         return any(
             map(lambda key: key in self._cache, keys)
         )
 
-    async def delete(self, key: Union[str, int]) -> bool:
+    async def delete(self, key: Hashable) -> bool:
         if key not in self._cache:
             return False
         del self._cache[key]

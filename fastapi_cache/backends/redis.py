@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Union, Any
 
 import aioredis
 from aioredis import Redis
@@ -8,8 +8,10 @@ from .base import BaseCacheBackend, DEFAULT_TIMEOUT
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
 
+RedisAcceptable = Union[str, int]
 
-class RedisCacheBackend(BaseCacheBackend):
+
+class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
     DEFAULT_ENCODING = 'utf-8'
 
     def __init__(self, address: str, pool_minsize: int = DEFAULT_POOL_MIN_SIZE) -> None:
@@ -28,7 +30,7 @@ class RedisCacheBackend(BaseCacheBackend):
 
     async def add(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
@@ -56,7 +58,7 @@ class RedisCacheBackend(BaseCacheBackend):
 
     async def get(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         default: Any = None,
         **kwargs,
     ) -> Any:
@@ -70,7 +72,7 @@ class RedisCacheBackend(BaseCacheBackend):
 
     async def set(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         value: Any,
         timeout: int = DEFAULT_TIMEOUT
     ) -> bool:
@@ -78,13 +80,13 @@ class RedisCacheBackend(BaseCacheBackend):
 
         return await client.set(key, value, expire=timeout)
 
-    async def exists(self, *keys: Union[str, int]) -> int:
+    async def exists(self, *keys: Union[RedisAcceptable]) -> Any:
         client = await self._client
         exists = await client.exists(*keys)
 
         return bool(exists)
 
-    async def delete(self, key: Union[str, int]) -> bool:
+    async def delete(self, key: RedisAcceptable) -> bool:
         client = await self._client
 
         return await client.delete(key)
