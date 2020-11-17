@@ -82,6 +82,11 @@ async def test_should_return_default_if_key_not_exists(
         ['key3', 'key4'],
         False,
     ],
+    [
+        [],
+        ['key3', 'key4'],
+        False,
+    ],
 
 ))
 @pytest.mark.asyncio
@@ -121,15 +126,6 @@ async def test_delete_should_remove_from_cache(
     fetched_value = await f_backend.get(TEST_KEY)
 
     assert fetched_value is None
-
-
-@pytest.mark.asyncio
-async def test_exists_check_if_key_not_exsists(
-    f_backend: RedisCacheBackend
-) -> None:
-    is_there = await f_backend.exists(TEST_KEY)
-
-    assert is_there is 0
 
 
 @pytest.mark.asyncio
