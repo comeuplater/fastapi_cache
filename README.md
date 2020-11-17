@@ -59,3 +59,4 @@ async def on_shutdown() -> None:
 ## Acknowledgments
 
 * Balburdia
+* xobtoor
