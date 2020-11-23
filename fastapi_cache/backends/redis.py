@@ -13,7 +13,6 @@ RedisAcceptable = Union[str, int]
 
 
 class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
-
     def __init__(
         self,
         address: str,
