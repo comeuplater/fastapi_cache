@@ -2,7 +2,6 @@ from typing import Any, Union, Hashable, Tuple
 
 from .base import BaseCacheBackend
 
-DEFAULT_TIMEOUT = 0
 CACHE_KEY = 'IN_MEMORY'
 
 
@@ -14,7 +13,7 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         self,
         key: Hashable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs,
     ) -> bool:
         if key in self._cache:
             return False
@@ -34,7 +33,7 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         self,
         key: Hashable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs,
     ) -> bool:
         self._cache[key] = value
 

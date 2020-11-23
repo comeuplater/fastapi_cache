@@ -1,7 +1,5 @@
 from typing import TypeVar, Generic, Tuple
 
-DEFAULT_TIMEOUT = 600
-
 KT = TypeVar('KT')
 VT = TypeVar('VT')
 
@@ -11,7 +9,7 @@ class BaseCacheBackend(Generic[KT, VT]):
         self,
         key: KT,
         value: VT,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs
     ) -> bool:
         raise NotImplementedError
 
@@ -27,7 +25,7 @@ class BaseCacheBackend(Generic[KT, VT]):
         self,
         key: KT,
         value: VT,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs
     ) -> bool:
         raise NotImplementedError
 

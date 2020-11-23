@@ -3,7 +3,7 @@ from typing import Union, Any
 import aioredis
 from aioredis import Redis
 
-from .base import BaseCacheBackend, DEFAULT_TIMEOUT
+from .base import BaseCacheBackend
 
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
@@ -32,7 +32,7 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
         self,
         key: RedisAcceptable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs
     ) -> bool:
         """
         Bad temporary solution, this approach prone to
@@ -54,7 +54,7 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
         if in_cache is not None:
             return False
 
-        return await client.set(key, value, expire=timeout)
+        return await client.set(key, value, **kwargs)
 
     async def get(
         self,
@@ -62,9 +62,6 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
         default: Any = None,
         **kwargs,
     ) -> Any:
-        if 'encoding' not in kwargs:
-            kwargs['encoding'] = self.DEFAULT_ENCODING
-
         client = await self._client
         cached_value = await client.get(key, **kwargs)
 
@@ -74,13 +71,13 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
         self,
         key: RedisAcceptable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs,
     ) -> bool:
         client = await self._client
 
-        return await client.set(key, value, expire=timeout)
+        return await client.set(key, value, **kwargs)
 
-    async def exists(self, *keys: Union[RedisAcceptable]) -> Any:
+    async def exists(self, *keys: Union[RedisAcceptable]) -> bool:
         client = await self._client
         exists = await client.exists(*keys)
 
