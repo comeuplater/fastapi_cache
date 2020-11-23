@@ -1,4 +1,4 @@
-from typing import Union, Any
+from typing import Union, Any, Optional
 
 import aioredis
 from aioredis import Redis
@@ -14,9 +14,15 @@ RedisAcceptable = Union[str, int]
 class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
     DEFAULT_ENCODING = 'utf-8'
 
-    def __init__(self, address: str, pool_minsize: int = DEFAULT_POOL_MIN_SIZE) -> None:
+    def __init__(
+        self,
+        address: str,
+        pool_minsize: int = DEFAULT_POOL_MIN_SIZE,
+        encoding: Optional[str] = None
+    ) -> None:
         self._redis_address = address
         self._redis_pool_minsize = pool_minsize
+        self._encoding = encoding or self.DEFAULT_ENCODING
 
     @property
     async def _client(self) -> Redis:
@@ -62,6 +68,8 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
         default: Any = None,
         **kwargs,
     ) -> Any:
+        kwargs.setdefault('encoding', self._encoding)
+
         client = await self._client
         cached_value = await client.get(key, **kwargs)
 
