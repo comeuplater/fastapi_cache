@@ -1,19 +1,27 @@
-from typing import Any, Optional, Union
+from typing import Union, Any, Optional
 
 import aioredis
 from aioredis import Redis
 
-from .base import BaseCacheBackend, DEFAULT_TIMEOUT
+from .base import BaseCacheBackend
 
-
+DEFAULT_ENCODING = 'utf-8'
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
 
+RedisAcceptable = Union[str, int]
 
-class RedisCacheBackend(BaseCacheBackend):
-    def __init__(self, address: str, pool_minsize: int = DEFAULT_POOL_MIN_SIZE) -> None:
+
+class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
+    def __init__(
+        self,
+        address: str,
+        pool_minsize: Optional[int] = DEFAULT_POOL_MIN_SIZE,
+        encoding: Optional[str] = DEFAULT_ENCODING
+    ) -> None:
         self._redis_address = address
         self._redis_pool_minsize = pool_minsize
+        self._encoding = encoding
 
     @property
     async def _client(self) -> Redis:
@@ -27,9 +35,9 @@ class RedisCacheBackend(BaseCacheBackend):
 
     async def add(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs
     ) -> bool:
         """
         Bad temporary solution, this approach prone to
@@ -51,39 +59,38 @@ class RedisCacheBackend(BaseCacheBackend):
         if in_cache is not None:
             return False
 
-        return await client.set(key, value, expire=timeout)
+        return await client.set(key, value, **kwargs)
 
     async def get(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         default: Any = None,
-        encoding: Optional[str] = 'utf-8'
+        **kwargs,
     ) -> Any:
-        kwargs = {"key": key}
-        if encoding is not None:
-            kwargs['encoding'] = encoding
+        kwargs.setdefault('encoding', self._encoding)
 
         client = await self._client
-        cached_value = await client.get(**kwargs)
+        cached_value = await client.get(key, **kwargs)
 
         return cached_value if cached_value is not None else default
 
     async def set(
         self,
-        key: Union[str, int],
+        key: RedisAcceptable,
         value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        **kwargs,
     ) -> bool:
         client = await self._client
 
-        return await client.set(key, value, expire=timeout)
+        return await client.set(key, value, **kwargs)
 
-    async def exists(self, *key: Union[str, int]) -> int:
+    async def exists(self, *keys: Union[RedisAcceptable]) -> bool:
         client = await self._client
+        exists = await client.exists(*keys)
 
-        return await client.exists(*key)
+        return bool(exists)
 
-    async def delete(self, key: Union[str, int]) -> bool:
+    async def delete(self, key: RedisAcceptable) -> bool:
         client = await self._client
 
         return await client.delete(key)

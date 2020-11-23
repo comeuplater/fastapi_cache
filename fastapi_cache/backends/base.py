@@ -1,33 +1,38 @@
-from typing import Any, Union
+from typing import TypeVar, Generic, Tuple
 
-DEFAULT_TIMEOUT = 600
+KT = TypeVar('KT')
+VT = TypeVar('VT')
 
 
-class BaseCacheBackend(object):
+class BaseCacheBackend(Generic[KT, VT]):
     async def add(
         self,
-        key: Union[str, int],
-        value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        key: KT,
+        value: VT,
+        **kwargs
     ) -> bool:
         raise NotImplementedError
 
     async def get(
         self,
-        key: Union[str, int],
-        default: Any = None
-    ) -> Any:
+        key: KT,
+        default: VT = None,
+        **kwargs
+    ) -> VT:
         raise NotImplementedError
 
     async def set(
         self,
-        key: Union[str, int],
-        value: Any,
-        timeout: int = DEFAULT_TIMEOUT
+        key: KT,
+        value: VT,
+        **kwargs
     ) -> bool:
         raise NotImplementedError
 
-    async def delete(self, key: Union[str, int]) -> bool:
+    async def exists(self, *keys: Tuple[KT]) -> bool:
+        raise NotImplementedError
+
+    async def delete(self, key: KT) -> bool:
         raise NotImplementedError
 
     async def flush(self) -> None:
