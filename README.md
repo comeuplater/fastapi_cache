@@ -60,3 +60,8 @@ async def on_shutdown() -> None:
 
 * Balburdia
 * xobtoor
+
+## Changelog
+
+* 0.0.6 Added typings for backends. Specific arguments now need to be passed through **kwargs.
+Set default encoding to utf-8 for redis backend, removed default TTL for redis keys.
