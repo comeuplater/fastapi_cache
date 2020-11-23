@@ -1,4 +1,4 @@
-from typing import Any, Union, Hashable, Tuple
+from typing import Any, Hashable, Tuple
 
 from .base import BaseCacheBackend
 
