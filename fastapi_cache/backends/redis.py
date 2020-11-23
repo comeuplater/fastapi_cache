@@ -5,6 +5,7 @@ from aioredis import Redis
 
 from .base import BaseCacheBackend
 
+DEFAULT_ENCODING = 'utf-8'
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
 
@@ -12,17 +13,16 @@ RedisAcceptable = Union[str, int]
 
 
 class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
-    DEFAULT_ENCODING = 'utf-8'
 
     def __init__(
         self,
         address: str,
-        pool_minsize: int = DEFAULT_POOL_MIN_SIZE,
-        encoding: Optional[str] = None
+        pool_minsize: Optional[int] = DEFAULT_POOL_MIN_SIZE,
+        encoding: Optional[str] = DEFAULT_ENCODING
     ) -> None:
         self._redis_address = address
         self._redis_pool_minsize = pool_minsize
-        self._encoding = encoding or self.DEFAULT_ENCODING
+        self._encoding = encoding
 
     @property
     async def _client(self) -> Redis:
