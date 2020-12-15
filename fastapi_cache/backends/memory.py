@@ -39,7 +39,7 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
 
         return True
 
-    async def exists(self, *keys: Tuple[Hashable]) -> bool:
+    async def exists(self, *keys: Hashable) -> bool:
         return any(
             map(lambda key: key in self._cache, keys)
         )

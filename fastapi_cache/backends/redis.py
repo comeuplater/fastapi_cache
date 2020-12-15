@@ -1,4 +1,4 @@
-from typing import Union, Any, Optional
+from typing import Union, Any, Optional, AnyStr
 
 import aioredis
 from aioredis import Redis
@@ -9,7 +9,7 @@ DEFAULT_ENCODING = 'utf-8'
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
 
-RedisAcceptable = Union[str, int]
+RedisAcceptable = Union[AnyStr, int]
 
 
 class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
@@ -84,7 +84,7 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
 
         return await client.set(key, value, **kwargs)
 
-    async def exists(self, *keys: Union[RedisAcceptable]) -> bool:
+    async def exists(self, *keys: RedisAcceptable) -> bool:
         client = await self._client
         exists = await client.exists(*keys)
 
