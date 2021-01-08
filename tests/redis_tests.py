@@ -141,6 +141,17 @@ async def test_expire_from_cache(
     assert fetched_value is None
 
 @pytest.mark.asyncio
+async def test_expire_from_cache_failure(
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.add(TEST_KEY, TEST_VALUE)
+    await f_backend.expire(TEST_KEY, 5)
+    await asyncio.sleep(3)
+    fetched_value = await f_backend.get(TEST_KEY)
+
+    assert fetched_value is TEST_VALUE
+
+@pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(
     f_backend: RedisCacheBackend
 ) -> None:
