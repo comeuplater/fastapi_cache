@@ -2,6 +2,7 @@ from typing import Tuple, List
 
 import aioredis
 import pytest
+import asyncio
 
 from fastapi_cache.backends.redis import RedisCacheBackend
 
@@ -127,6 +128,17 @@ async def test_delete_should_remove_from_cache(
 
     assert fetched_value is None
 
+
+@pytest.mark.asyncio
+async def test_expire_from_cache(
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.add(TEST_KEY, TEST_VALUE)
+    await f_backend.expire(TEST_KEY, 1)
+    await asyncio.sleep(3)
+    fetched_value = await f_backend.get(TEST_KEY)
+
+    assert fetched_value is None
 
 @pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(
