@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from unittest import mock
 
 import aioredis
 import pytest
@@ -148,3 +149,21 @@ async def test_close_should_close_connection(
     await f_backend.close()
     with pytest.raises(aioredis.errors.PoolClosedError):
         await f_backend.add(TEST_KEY, TEST_VALUE)
+
+
+@pytest.mark.asyncio
+@mock.patch('fastapi_cache.backends.redis.aioredis.create_redis_pool')
+async def test_should_recreate_connection(
+    redis_pool_factory: mock.Mock
+) -> None:
+    redis = mock.AsyncMock()
+    redis.ping.side_effect = aioredis.RedisError
+    redis_pool_factory.return_value = redis
+
+    cache = RedisCacheBackend(
+        'redis://localhost',
+        test_connection=True
+    )
+
+    await cache.set('pi', 3.14159)
+    assert redis_pool_factory.call_count == 2
