@@ -1,7 +1,7 @@
 from typing import Union, Optional, AnyStr
 
 import aioredis
-from aioredis import Redis, RedisError
+from aioredis import Redis
 
 from .base import BaseCacheBackend
 
@@ -21,12 +21,10 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
         address: str,
         pool_minsize: Optional[int] = DEFAULT_POOL_MIN_SIZE,
         encoding: Optional[str] = DEFAULT_ENCODING,
-        test_connection: bool = False,
     ) -> None:
         self._redis_address = address
         self._redis_pool_minsize = pool_minsize
         self._encoding = encoding
-        self._test_connection = test_connection
 
         self._pool: Optional[Redis] = None
 
@@ -35,20 +33,7 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
         if self._pool is None:
             self._pool = await self._create_connection()
 
-        if self._test_connection:
-            if not (await self._is_alive):
-                self._pool = await self._create_connection()
-
         return self._pool
-
-    @property
-    async def _is_alive(self) -> bool:
-        try:
-            await self._pool.ping()
-        except RedisError:
-            return False
-
-        return True
 
     async def _create_connection(self) -> Redis:
         return await aioredis.create_redis_pool(
