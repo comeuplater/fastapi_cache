@@ -1,4 +1,4 @@
-from typing import Union, Any, Optional, AnyStr
+from typing import Union, Optional, AnyStr
 
 import aioredis
 from aioredis import Redis, RedisError
@@ -9,10 +9,13 @@ DEFAULT_ENCODING = 'utf-8'
 DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
 
-RedisAcceptable = Union[AnyStr, int]
+# expected to be of bytearray, bytes, float, int, or str type
+
+RedisKey = Union[AnyStr, float, int]
+RedisValue = Union[AnyStr, float, int]
 
 
-class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
+class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
     def __init__(
         self,
         address: str,
@@ -55,8 +58,8 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
 
     async def add(
         self,
-        key: RedisAcceptable,
-        value: Any,
+        key: RedisKey,
+        value: RedisValue,
         **kwargs
     ) -> bool:
         """
@@ -83,10 +86,10 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
 
     async def get(
         self,
-        key: RedisAcceptable,
-        default: Any = None,
+        key: RedisKey,
+        default: RedisValue = None,
         **kwargs,
-    ) -> Any:
+    ) -> AnyStr:
         kwargs.setdefault('encoding', self._encoding)
 
         client = await self._client
@@ -96,21 +99,21 @@ class RedisCacheBackend(BaseCacheBackend[RedisAcceptable, Any]):
 
     async def set(
         self,
-        key: RedisAcceptable,
-        value: Any,
+        key: RedisKey,
+        value: RedisValue,
         **kwargs,
     ) -> bool:
         client = await self._client
 
         return await client.set(key, value, **kwargs)
 
-    async def exists(self, *keys: RedisAcceptable) -> bool:
+    async def exists(self, *keys: RedisKey) -> bool:
         client = await self._client
         exists = await client.exists(*keys)
 
         return bool(exists)
 
-    async def delete(self, key: RedisAcceptable) -> bool:
+    async def delete(self, key: RedisKey) -> bool:
         client = await self._client
 
         return await client.delete(key)

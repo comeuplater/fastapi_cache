@@ -1,10 +1,10 @@
-from typing import Tuple, List
+from typing import Tuple, List, Any
 from unittest import mock
 
 import aioredis
 import pytest
 
-from fastapi_cache.backends.redis import RedisCacheBackend
+from fastapi_cache.backends.redis import RedisCacheBackend, RedisKey
 
 TEST_KEY = 'constant'
 TEST_VALUE = '0'
@@ -156,7 +156,7 @@ async def test_close_should_close_connection(
 async def test_should_recreate_connection(
     redis_pool_factory: mock.Mock
 ) -> None:
-    redis = mock.AsyncMock()
+    redis = mock.AsyncMock()  # > 3.7
     redis.ping.side_effect = aioredis.RedisError
     redis_pool_factory.return_value = redis
 
@@ -167,3 +167,23 @@ async def test_should_recreate_connection(
 
     await cache.set('pi', 3.14159)
     assert redis_pool_factory.call_count == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,expected', [
+    [1, 1, '1'],
+    ['1', 1, '1'],
+    [1.5, 1, '1'],
+    [b'byte', 1, '1'],
+    ['2', 1.5, '1.5'],
+    [3, b'bytes', 'bytes'],  # default encoding
+    [3.5, '3.5', '3.5'],
+])
+async def test_scalar_types(
+    key: RedisKey,
+    value: Any,
+    expected: Any,
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.set(key, value)
+    assert await f_backend.get(key) == expected
