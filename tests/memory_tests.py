@@ -1,3 +1,5 @@
+from typing import Hashable, Any, Tuple
+
 import pytest
 
 from fastapi_cache.backends.memory import InMemoryCacheBackend
@@ -78,3 +80,81 @@ async def test_flush_should_remove_all_objects_from_cache(
 
     assert await f_backend.get('pi') is None
     assert await f_backend.get('golden_ratio') is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    ['hello', 'world', 0, None],
+    ['hello', 'world', 100, 'world'],
+])
+async def test_should_set_value_with_ttl(
+    key: Hashable,
+    value: Any,
+    ttl: int,
+    expected: Any,
+    f_backend: InMemoryCacheBackend
+) -> None:
+    await f_backend.set(key, value, ttl=ttl)
+    fetched_value = await f_backend.get(key)
+
+    assert fetched_value == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    ['hello', 'world', 0, None],
+    ['hello', 'world', 100, 'world'],
+])
+async def test_should_add_value_with_ttl(
+    key: Hashable,
+    value: Any,
+    ttl: int,
+    expected: Any,
+    f_backend: InMemoryCacheBackend
+) -> None:
+    await f_backend.add(key, value, ttl=ttl)
+    fetched_value = await f_backend.get(key)
+
+    assert fetched_value == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('keys', [
+    ('hello', 'world'),
+])
+async def test_key_should_check_for_exists(
+    keys: Tuple[Hashable],
+    f_backend: InMemoryCacheBackend
+) -> None:
+    for key in keys:
+        await f_backend.set(key, key)
+
+    assert await f_backend.exists(*keys) is True
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('keys,ttl,exists', [
+    [('hello', 'world'), 0, False],
+    [('hello', 'world'), 100, True],
+])
+async def test_key_should_check_for_exists_with_ttl(
+    keys: Tuple[Hashable],
+    ttl: int,
+    exists: bool,
+    f_backend: InMemoryCacheBackend
+) -> None:
+    for key in keys:
+        await f_backend.set(key, key, ttl=ttl)
+
+    assert await f_backend.exists(*keys) is exists
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('keys', [
+    ('hello', 'world'),
+])
+async def test_should_return_false_if_keys_not_exist(
+    keys: Tuple[Hashable],
+    f_backend: InMemoryCacheBackend
+) -> None:
+    assert await f_backend.exists(*keys) is False

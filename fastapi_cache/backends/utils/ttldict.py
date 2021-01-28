@@ -11,6 +11,7 @@ class TTLDict:
             self._base[key] = (
                 self._get_ttl_timestamp(ttl), value
             )
+            print(self._base)
         except Exception:
             return False
 

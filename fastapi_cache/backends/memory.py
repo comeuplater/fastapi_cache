@@ -16,7 +16,7 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         value: Any,
         **kwargs,
     ) -> bool:
-        return self._cache.add(key, value)
+        return self._cache.add(key, value, **kwargs)
 
     async def get(
         self,
@@ -32,10 +32,10 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         value: Any,
         **kwargs,
     ) -> bool:
-        return self._cache.set(key, value)
+        return self._cache.set(key, value, **kwargs)
 
     async def exists(self, *keys: Hashable) -> bool:
-        return self._cache.exists(keys)
+        return self._cache.exists(*keys)
 
     async def delete(self, key: Hashable) -> bool:
         return self._cache.delete(key)
