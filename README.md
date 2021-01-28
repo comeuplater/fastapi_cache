@@ -58,8 +58,10 @@ async def on_shutdown() -> None:
 
 ## Acknowledgments
 
-* Balburdia
-* xobtoor
+* [Balburdia](https://github.com/Balburdia)
+* [xobtoor](https://github.com/xobtoor)
+* [jersobh](https://github.com/jersobh)
+
 
 ## Changelog
 
