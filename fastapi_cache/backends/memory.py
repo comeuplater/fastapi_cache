@@ -34,6 +34,13 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
     ) -> bool:
         return self._cache.set(key, value, **kwargs)
 
+    async def expire(
+        self,
+        key: Hashable,
+        ttl: int
+    ) -> bool:
+        return self._cache.expire(key, ttl)
+
     async def exists(self, *keys: Hashable) -> bool:
         return self._cache.exists(*keys)
 

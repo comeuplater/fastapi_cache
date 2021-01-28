@@ -29,6 +29,13 @@ class BaseCacheBackend(Generic[KT, VT]):
     ) -> bool:
         raise NotImplementedError
 
+    async def expire(
+        self,
+        key: KT,
+        ttl: int
+    ) -> bool:
+        raise NotImplementedError
+
     async def exists(self, *keys: KT) -> bool:
         raise NotImplementedError
 

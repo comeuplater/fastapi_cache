@@ -182,3 +182,20 @@ def test_should_return_false_if_keys_not_exist(
     ttl_dict: TTLDict
 ) -> None:
     assert ttl_dict.exists(*keys) is False
+
+
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    ['hello', 'world', 0, None],
+    ['hello', 'world', 10, 'world'],
+])
+def test_expire_from_cache(
+    key: Hashable,
+    value: Any,
+    ttl: int,
+    expected: Any,
+    ttl_dict: TTLDict
+) -> None:
+    ttl_dict.add(key, value)
+    ttl_dict.expire(key, ttl)
+
+    assert ttl_dict.get(key) == expected

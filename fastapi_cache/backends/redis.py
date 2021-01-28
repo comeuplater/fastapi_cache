@@ -109,12 +109,12 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
 
     async def expire(
         self,
-        key: RedisAcceptable,
-        value: Any
+        key: RedisKey,
+        ttl: int
     ) -> bool:
         client = await self._client
 
-        return await client.expire(key, value)
+        return await client.expire(key, ttl)
 
     async def close(self) -> None:
         client = await self._client

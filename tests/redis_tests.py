@@ -2,7 +2,6 @@ from typing import Tuple, List, Any
 
 import aioredis
 import pytest
-import asyncio
 
 from fastapi_cache.backends.redis import RedisCacheBackend, RedisKey
 
@@ -130,26 +129,23 @@ async def test_delete_should_remove_from_cache(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    [TEST_KEY, TEST_VALUE, 0, None],
+    [TEST_KEY, TEST_VALUE, 10, TEST_VALUE],
+])
 async def test_expire_from_cache(
+    key: RedisKey,
+    value: Any,
+    ttl: int,
+    expected: Any,
     f_backend: RedisCacheBackend
 ) -> None:
-    await f_backend.add(TEST_KEY, TEST_VALUE)
-    await f_backend.expire(TEST_KEY, 1)
-    await asyncio.sleep(3)
-    fetched_value = await f_backend.get(TEST_KEY)
+    await f_backend.add(key, value)
+    await f_backend.expire(key, ttl)
+    fetched_value = await f_backend.get(key)
 
-    assert fetched_value is None
+    assert fetched_value == expected
 
-@pytest.mark.asyncio
-async def test_expire_from_cache_failure(
-    f_backend: RedisCacheBackend
-) -> None:
-    await f_backend.add(TEST_KEY, TEST_VALUE)
-    await f_backend.expire(TEST_KEY, 5)
-    await asyncio.sleep(3)
-    fetched_value = await f_backend.get(TEST_KEY)
-
-    assert fetched_value is TEST_VALUE
 
 @pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(

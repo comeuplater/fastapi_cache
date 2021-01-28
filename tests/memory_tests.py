@@ -158,3 +158,22 @@ async def test_should_return_false_if_keys_not_exist(
     f_backend: InMemoryCacheBackend
 ) -> None:
     assert await f_backend.exists(*keys) is False
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    [TEST_KEY, TEST_VALUE, 0, None],
+    [TEST_KEY, TEST_VALUE, 10, TEST_VALUE],
+])
+async def test_expire_from_cache(
+    key: Hashable,
+    value: Any,
+    ttl: int,
+    expected: Any,
+    f_backend: InMemoryCacheBackend
+) -> None:
+    await f_backend.add(key, value)
+    await f_backend.expire(key, ttl)
+    fetched_value = await f_backend.get(key)
+
+    assert fetched_value == expected
