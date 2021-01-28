@@ -1,13 +1,14 @@
-from typing import Any, Hashable, Tuple
+from typing import Any, Hashable
 
 from .base import BaseCacheBackend
+from .utils.ttldict import TTLDict
 
 CACHE_KEY = 'IN_MEMORY'
 
 
 class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
     def __init__(self):
-        self._cache: dict = {}
+        self._cache = TTLDict()
 
     async def add(
         self,
@@ -15,11 +16,7 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         value: Any,
         **kwargs,
     ) -> bool:
-        if key in self._cache:
-            return False
-        self._cache[key] = value
-
-        return True
+        return self._cache.add(key, value)
 
     async def get(
         self,
@@ -35,24 +32,16 @@ class InMemoryCacheBackend(BaseCacheBackend[Hashable, Any]):
         value: Any,
         **kwargs,
     ) -> bool:
-        self._cache[key] = value
-
-        return True
+        return self._cache.set(key, value)
 
     async def exists(self, *keys: Hashable) -> bool:
-        return any(
-            map(lambda key: key in self._cache, keys)
-        )
+        return self._cache.exists(keys)
 
     async def delete(self, key: Hashable) -> bool:
-        if key not in self._cache:
-            return False
-        del self._cache[key]
-
-        return True
+        return self._cache.delete(key)
 
     async def flush(self) -> None:
-        self._cache = {}
+        return self._cache.flush()
 
     async def close(self) -> None:  # pragma: no cover
         return None
