@@ -1,9 +1,9 @@
-from typing import Tuple, List
+from typing import Tuple, List, Any
 
 import aioredis
 import pytest
 
-from fastapi_cache.backends.redis import RedisCacheBackend
+from fastapi_cache.backends.redis import RedisCacheBackend, RedisKey
 
 TEST_KEY = 'constant'
 TEST_VALUE = '0'
@@ -129,6 +129,25 @@ async def test_delete_should_remove_from_cache(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,ttl,expected', [
+    [TEST_KEY, TEST_VALUE, 0, None],
+    [TEST_KEY, TEST_VALUE, 10, TEST_VALUE],
+])
+async def test_expire_from_cache(
+    key: RedisKey,
+    value: Any,
+    ttl: int,
+    expected: Any,
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.add(key, value)
+    await f_backend.expire(key, ttl)
+    fetched_value = await f_backend.get(key)
+
+    assert fetched_value == expected
+
+
+@pytest.mark.asyncio
 async def test_flush_should_remove_all_objects_from_cache(
     f_backend: RedisCacheBackend
 ) -> None:
@@ -148,3 +167,23 @@ async def test_close_should_close_connection(
     await f_backend.close()
     with pytest.raises(aioredis.errors.PoolClosedError):
         await f_backend.add(TEST_KEY, TEST_VALUE)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('key,value,expected', [
+    [1, 1, '1'],
+    ['1', 1, '1'],
+    [1.5, 1, '1'],
+    [b'bytes', 1, '1'],
+    ['2', 1.5, '1.5'],
+    [3, b'bytes', 'bytes'],  # default encoding
+    [3.5, '3.5', '3.5'],
+])
+async def test_scalar_types(
+    key: RedisKey,
+    value: Any,
+    expected: Any,
+    f_backend: RedisCacheBackend
+) -> None:
+    await f_backend.set(key, value)
+    assert await f_backend.get(key) == expected
