@@ -11,7 +11,6 @@ class TTLDict:
             self._base[key] = (
                 self._get_ttl_timestamp(ttl), value
             )
-            print(self._base)
         except Exception:
             return False
 
@@ -25,7 +24,6 @@ class TTLDict:
 
     def get(self, key: Hashable, default: Optional[Any] = None) -> Any:
         ttl, value = self._base.get(key, (None, default))
-        print(self._base)
         if ttl is not None and self._is_ttl_expired(ttl):
             self.delete(key)
             return default
