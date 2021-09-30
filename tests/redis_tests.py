@@ -166,8 +166,8 @@ async def test_close_should_close_connection(
     f_backend: RedisCacheBackend
 ) -> None:
     await f_backend.close()
-    with pytest.raises(aioredis.errors.PoolClosedError):
-        await f_backend.add(TEST_KEY, TEST_VALUE)
+    assert len(f_backend._pool.connection_pool._available_connections) == 0
+    assert len(f_backend._pool.connection_pool._in_use_connections) == 0
 
 
 @pytest.mark.asyncio

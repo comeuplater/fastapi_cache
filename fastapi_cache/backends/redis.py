@@ -1,3 +1,4 @@
+import warnings
 from typing import Union, Optional, AnyStr
 
 import aioredis
@@ -6,8 +7,9 @@ from aioredis import Redis
 from .base import BaseCacheBackend
 
 DEFAULT_ENCODING = 'utf-8'
-DEFAULT_POOL_MIN_SIZE = 5
 CACHE_KEY = 'REDIS'
+# a singleton sentinel value for parameter defaults
+_sentinel = object()
 
 # expected to be of bytearray, bytes, float, int, or str type
 
@@ -19,11 +21,16 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
     def __init__(
         self,
         address: str,
-        pool_minsize: Optional[int] = DEFAULT_POOL_MIN_SIZE,
+        pool_minsize: Optional[int] = _sentinel,
         encoding: Optional[str] = DEFAULT_ENCODING,
     ) -> None:
         self._redis_address = address
-        self._redis_pool_minsize = pool_minsize
+        if pool_minsize is not _sentinel:
+            warnings.warn(
+                "Parameter 'pool_minsize' has been obsolete since aioredis 2.0.0.",
+                DeprecationWarning,
+            )
+
         self._encoding = encoding
 
         self._pool: Optional[Redis] = None
@@ -36,10 +43,7 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
         return self._pool
 
     async def _create_connection(self) -> Redis:
-        return await aioredis.create_redis_pool(
-            self._redis_address,
-            minsize=self._redis_pool_minsize,
-        )
+        return aioredis.from_url(self._redis_address)
 
     async def add(
         self,
@@ -75,10 +79,12 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
         default: RedisValue = None,
         **kwargs,
     ) -> AnyStr:
-        kwargs.setdefault('encoding', self._encoding)
+        encoding = kwargs.pop("encoding", self._encoding)
 
         client = await self._client
         cached_value = await client.get(key, **kwargs)
+        if encoding is not None and isinstance(cached_value, bytes):
+            cached_value = cached_value.decode(encoding)
 
         return cached_value if cached_value is not None else default
 
@@ -118,5 +124,6 @@ class RedisCacheBackend(BaseCacheBackend[RedisKey, RedisValue]):
 
     async def close(self) -> None:
         client = await self._client
-        client.close()
-        await client.wait_closed()
+        # Redis.close() only close currrent connection, but not the pool
+        await client.connection_pool.disconnect()
+        await client.close()

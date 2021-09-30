@@ -18,6 +18,6 @@ setup(
         'redis', 'aioredis', 'asyncio', 'fastapi', 'starlette', 'cache'
     ],
     install_requires=[
-        'aioredis==1.3.1',
+        'aioredis==2.0.0',
     ],
 )
