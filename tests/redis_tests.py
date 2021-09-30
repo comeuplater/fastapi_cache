@@ -32,6 +32,7 @@ async def test_should_add_n_get_data_no_encoding(
 ) -> None:
     NO_ENCODING_KEY = 'bytes'
     NO_ENCODING_VALUE = b'test'
+    await f_backend.expire(NO_ENCODING_KEY, 0)
     is_added = await f_backend.add(NO_ENCODING_KEY, NO_ENCODING_VALUE)
 
     assert is_added is True
@@ -165,8 +166,8 @@ async def test_close_should_close_connection(
     f_backend: RedisCacheBackend
 ) -> None:
     await f_backend.close()
-    with pytest.raises(aioredis.errors.PoolClosedError):
-        await f_backend.add(TEST_KEY, TEST_VALUE)
+    assert len(f_backend._pool.connection_pool._available_connections) == 0
+    assert len(f_backend._pool.connection_pool._in_use_connections) == 0
 
 
 @pytest.mark.asyncio
