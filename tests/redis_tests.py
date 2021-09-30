@@ -32,6 +32,7 @@ async def test_should_add_n_get_data_no_encoding(
 ) -> None:
     NO_ENCODING_KEY = 'bytes'
     NO_ENCODING_VALUE = b'test'
+    await f_backend.expire(NO_ENCODING_KEY, 0)
     is_added = await f_backend.add(NO_ENCODING_KEY, NO_ENCODING_VALUE)
 
     assert is_added is True
